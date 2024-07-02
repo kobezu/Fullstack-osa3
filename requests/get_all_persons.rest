@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/persons
+GET https://fullstack-osa3-0nt7.onrender.com/api/persons
