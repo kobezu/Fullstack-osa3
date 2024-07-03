@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json())
 
-morgan.token('body', (req, res) => JSON.stringify(req.body))
+morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(
   morgan((tokens, req, res) => {
     const tokenList = [
@@ -20,17 +20,17 @@ app.use(
       tokens['response-time'](req, res), 'ms'
     ]
 
-    if (req.method === "POST" || req.method === "PUT") {
+    if (req.method === 'POST' || req.method === 'PUT') {
       return tokenList.concat(tokens.body(req, res)).join(' ')
     }
     else {return tokenList.join(' ')}
   }
-))
+  ))
 
 app.get('/info', (request, response, next) => {
   Person.countDocuments()
     .then(count => {
-      const info = 
+      const info =
         `<div>
           <div>Phonebook has info for ${count} people</div>
           <div>${Date().toLocaleString()}</div>
@@ -54,13 +54,13 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.get('/api/persons', (request, response, next) => {
   Person.find({})
-  .then(persons => response.json(persons))
-  .catch(error => next(error))
+    .then(persons => response.json(persons))
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => response.status(204).end())
+    .then(() => response.status(204).end())
     .catch(error => next(error))
 })
 
@@ -73,18 +73,18 @@ app.post('/api/persons', (request, response, next) => {
   })
 
   person.save()
-  .then(savedPerson => {response.json(savedPerson)})
-  .catch(error => next(error))
+    .then(savedPerson => {response.json(savedPerson)})
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const {name, number} = request.body
+  const { name, number } = request.body
 
   Person.findByIdAndUpdate(
-      request.params.id, 
-      {name, number}, 
-      {new: true, runValidators: true, context: 'query'}
-    )
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
     .then(updatedPerson => {response.json(updatedPerson)})
     .catch(error => next(error))
 })
